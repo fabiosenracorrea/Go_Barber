@@ -1,13 +1,10 @@
-import path from 'path';
-import fs from 'fs';
 import { injectable, inject } from 'tsyringe';
-
-import uploadConfig from '@config/upload';
 
 import AppError from '@shared/errors/AppError';
 import User from '@modules/users/infra/typeorm/entities/User';
 
 import iUsersRepository from '@modules/users/repositories/iUsersRepository';
+import iDiskStorageProvider from '@shared/container/providers/StorageProvider/models/iStorageProvider';
 
 interface RequestTDO {
   user_id: string;
@@ -19,6 +16,9 @@ class UpdateUserAvatarService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: iUsersRepository,
+
+    @inject('DiskStorageProvider')
+    private storageProvider: iDiskStorageProvider,
   ) {}
 
   public async execute({ user_id, avatarFilename }: RequestTDO): Promise<User> {
@@ -29,16 +29,12 @@ class UpdateUserAvatarService {
     }
     // delete previous avatar
     if (user.avatar) {
-      const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
-
-      const avatarExists = await fs.promises.stat(userAvatarFilePath);
-
-      if (avatarExists) {
-        await fs.promises.unlink(userAvatarFilePath);
-      }
+      await this.storageProvider.deleteFile(user.avatar);
     }
 
-    user.avatar = avatarFilename;
+    const newAvatarName = await this.storageProvider.saveFile(avatarFilename);
+
+    user.avatar = newAvatarName;
 
     const updatedUser = await this.usersRepository.save(user);
 
