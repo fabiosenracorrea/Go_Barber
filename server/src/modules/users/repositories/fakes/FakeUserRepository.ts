@@ -4,6 +4,7 @@ import User from '@modules/users/infra/typeorm/entities/User';
 
 import iUsersRepository from '@modules/users/repositories/iUsersRepository';
 import iCreateUserDTO from '@modules/users/dtos/iCreateUserDTO';
+import iProviderExceptionDTO from '@modules/users/dtos/iProviderExceptionDTO';
 
 class UsersRepository implements iUsersRepository {
   public users: User[] = [];
@@ -18,6 +19,18 @@ class UsersRepository implements iUsersRepository {
     const existentUser = this.users.find(user => user.id === id);
 
     return existentUser;
+  }
+
+  public async findAllProviders({
+    except,
+  }: iProviderExceptionDTO): Promise<User[]> {
+    let { users } = this;
+
+    if (except) {
+      users = this.users.filter(user => user.id !== except);
+    }
+
+    return users;
   }
 
   public async create(userData: iCreateUserDTO): Promise<User> {

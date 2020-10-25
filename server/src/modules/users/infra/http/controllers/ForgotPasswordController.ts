@@ -22,9 +22,9 @@ class ForgotPasswordController {
   public async update(request: Request, response: Response): Promise<Response> {
     const { password, token } = request.body;
 
-    const recoverUserPasswordService = container.resolve(ResetPasswordService);
+    const resetUserPasswordService = container.resolve(ResetPasswordService);
 
-    await recoverUserPasswordService.execute({
+    await resetUserPasswordService.execute({
       password,
       token,
     });
