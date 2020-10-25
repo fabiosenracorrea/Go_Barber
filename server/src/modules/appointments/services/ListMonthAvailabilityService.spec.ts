@@ -22,6 +22,7 @@ describe('ListProvidersAvailability ', () => {
     const maxAppointmentsInOneDay = 10;
     const firstHourPossible = 8;
     const fakeUserId = 'fiewjdi39';
+    const fakeProviderId = 'KJFSJDIFU8';
 
     const eachAppointmentHour = Array.from(
       { length: maxAppointmentsInOneDay },
@@ -31,7 +32,8 @@ describe('ListProvidersAvailability ', () => {
     await Promise.all(
       eachAppointmentHour.map(async (hour: number) => {
         const appointment = await fakeAppointmentsRepository.create({
-          provider_id: fakeUserId,
+          provider_id: fakeProviderId,
+          user_id: fakeUserId,
           date: new Date(yearOfTest, monthOfTest - 1, day1ofTest, hour, 0, 0),
         });
 
@@ -42,7 +44,8 @@ describe('ListProvidersAvailability ', () => {
     await Promise.all(
       eachAppointmentHour.map(async (hour: number) => {
         const appointment = await fakeAppointmentsRepository.create({
-          provider_id: fakeUserId,
+          provider_id: fakeProviderId,
+          user_id: fakeUserId,
           date: new Date(yearOfTest, monthOfTest - 1, day2ofTest, hour, 0, 0),
         });
 
@@ -51,12 +54,13 @@ describe('ListProvidersAvailability ', () => {
     );
 
     await fakeAppointmentsRepository.create({
-      provider_id: fakeUserId,
+      provider_id: fakeProviderId,
+      user_id: fakeUserId,
       date: new Date(yearOfTest, monthOfTest - 1, dayNotFull, 12, 0, 0),
     });
 
     const availability = await listMonthAvailabilityService.execute({
-      provider_id: fakeUserId,
+      provider_id: fakeProviderId,
       month: monthOfTest,
       year: yearOfTest,
     });

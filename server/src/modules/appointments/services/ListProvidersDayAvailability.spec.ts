@@ -20,10 +20,12 @@ describe('ListProvidersAvailability ', () => {
     const hourOfTest = 12;
     const firstAppointmentHour = 14;
     const secondAppointmentHour = 16;
+    const fakeProviderId = 'asdjja';
     const fakeUserId = 'fiewjdi39';
 
     await fakeAppointmentsRepository.create({
-      provider_id: fakeUserId,
+      provider_id: fakeProviderId,
+      user_id: fakeUserId,
       date: new Date(
         yearOfTest,
         monthOfTest - 1,
@@ -35,7 +37,8 @@ describe('ListProvidersAvailability ', () => {
     });
 
     await fakeAppointmentsRepository.create({
-      provider_id: fakeUserId,
+      provider_id: fakeProviderId,
+      user_id: fakeUserId,
       date: new Date(
         yearOfTest,
         monthOfTest - 1,
@@ -59,7 +62,7 @@ describe('ListProvidersAvailability ', () => {
     });
 
     const availability = await listProvidersDayAvailability.execute({
-      provider_id: fakeUserId,
+      provider_id: fakeProviderId,
       day: dayOfTest,
       month: monthOfTest,
       year: yearOfTest,

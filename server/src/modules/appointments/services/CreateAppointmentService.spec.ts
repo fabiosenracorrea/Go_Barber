@@ -8,6 +8,10 @@ import CreateAppointmentService from './CreateAppointmentService';
 let fakeAppointmentsRepository: FakeAppointmentsRepository;
 let createAppointmentService: CreateAppointmentService;
 
+const appointmentDate = new Date();
+const appointmentProvider = '123123123';
+const user_id = '392u38928';
+
 describe('Create Appointment Service', () => {
   beforeEach(() => {
     fakeAppointmentsRepository = new FakeAppointmentsRepository();
@@ -18,12 +22,10 @@ describe('Create Appointment Service', () => {
   });
 
   it('should be able to create a new appointment', async () => {
-    const appointmentDate = new Date();
-    const appointmentProvider = '123123123';
-
     const createdAppointment = await createAppointmentService.execute({
       date: appointmentDate,
       provider_id: appointmentProvider,
+      user_id,
     });
 
     const startOfHourDate = startOfHour(appointmentDate);
@@ -34,18 +36,17 @@ describe('Create Appointment Service', () => {
   });
 
   it('should not be able to create two appointments on the same time', async () => {
-    const appointmentDate = new Date();
-    const appointmentProvider = '123123123';
-
     await createAppointmentService.execute({
       date: appointmentDate,
       provider_id: appointmentProvider,
+      user_id,
     });
 
     expect(
       createAppointmentService.execute({
         date: appointmentDate,
         provider_id: appointmentProvider,
+        user_id,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
