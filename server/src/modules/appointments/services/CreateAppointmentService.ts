@@ -26,8 +26,8 @@ class CreateAppointmentService {
 
     const parsedDate = startOfHour(date);
 
-    const EARLIEST_HOUR = 5;
-    const LATEST_HOUR = 14;
+    const EARLIEST_HOUR = 8;
+    const LATEST_HOUR = 17;
 
     if (
       getHours(parsedDate) < EARLIEST_HOUR ||
