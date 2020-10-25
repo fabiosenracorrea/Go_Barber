@@ -8,7 +8,7 @@ import CreateAppointmentService from './CreateAppointmentService';
 let fakeAppointmentsRepository: FakeAppointmentsRepository;
 let createAppointmentService: CreateAppointmentService;
 
-const appointmentDate = new Date();
+const appointmentDate = new Date(2100, 4, 29, 12);
 const appointmentProvider = '123123123';
 const user_id = '392u38928';
 
@@ -42,9 +42,58 @@ describe('Create Appointment Service', () => {
       user_id,
     });
 
-    expect(
+    await expect(
       createAppointmentService.execute({
         date: appointmentDate,
+        provider_id: appointmentProvider,
+        user_id,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('should not be able to create an appointment on a past date', async () => {
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      const dateToBlockAppointment = new Date(2020, 4, 27);
+
+      return dateToBlockAppointment.getTime();
+    });
+
+    const dateInThePast = new Date(2020, 4, 20);
+
+    await expect(
+      createAppointmentService.execute({
+        date: dateInThePast,
+        provider_id: appointmentProvider,
+        user_id,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('should not create an appointment that has provider and user with the same ID', async () => {
+    await expect(
+      createAppointmentService.execute({
+        date: appointmentDate,
+        provider_id: appointmentProvider,
+        user_id: appointmentProvider,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('should not create an appointment before 8 or after 18', async () => {
+    const appointmentHourBefore8 = new Date(2100, 4, 27, 7);
+    const appointmentHourAfter18 = new Date(2100, 4, 27, 19);
+
+    await expect(
+      createAppointmentService.execute({
+        date: appointmentHourBefore8,
+        provider_id: appointmentProvider,
+        user_id,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    await expect(
+      createAppointmentService.execute({
+        date: appointmentHourAfter18,
         provider_id: appointmentProvider,
         user_id,
       }),
