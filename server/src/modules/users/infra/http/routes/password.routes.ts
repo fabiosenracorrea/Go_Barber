@@ -2,8 +2,6 @@ import { Router } from 'express';
 
 import ForgotPasswordController from '@modules/users/infra/http/controllers/ForgotPasswordController';
 
-import ensureAuth from '@modules/users/infra/http/middlewares/ensureAuth';
-
 const passwordRouter = Router();
 
 const passwordController = new ForgotPasswordController();
