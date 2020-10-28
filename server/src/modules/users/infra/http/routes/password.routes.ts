@@ -6,8 +6,6 @@ import ensureAuth from '@modules/users/infra/http/middlewares/ensureAuth';
 
 const passwordRouter = Router();
 
-passwordRouter.use(ensureAuth);
-
 const passwordController = new ForgotPasswordController();
 
 passwordRouter.post('/forgot', passwordController.create);
