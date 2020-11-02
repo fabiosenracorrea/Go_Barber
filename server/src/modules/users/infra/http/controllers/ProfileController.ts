@@ -1,5 +1,6 @@
 import { Response, Request } from 'express';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 import UpdateUserInfoService from '@modules/users/services/UpdateUserInfoService';
 import ShowProfileService from '@modules/users/services/ShowProfileService';
@@ -14,9 +15,7 @@ class UsersController {
       user_id: id,
     });
 
-    delete userInfo.password;
-
-    return response.status(201).json(userInfo);
+    return response.status(201).json(classToClass(userInfo));
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
@@ -33,9 +32,7 @@ class UsersController {
       old_password,
     });
 
-    delete updatedUser.password;
-
-    return response.status(201).json(updatedUser);
+    return response.status(201).json(classToClass(updatedUser));
   }
 }
 
