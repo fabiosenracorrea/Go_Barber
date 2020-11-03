@@ -22,9 +22,6 @@ appointmentsRouter.get('/list', appointmentsController.index);
 appointmentsRouter.get(
   '/appointments',
   celebrate({
-    [Segments.PARAMS]: {
-      id: Joi.string().uuid().required(),
-    },
     [Segments.BODY]: {
       month: Joi.number().required(),
       year: Joi.number().required(),
