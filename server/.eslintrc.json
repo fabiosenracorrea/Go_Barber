@@ -20,6 +20,8 @@
         "prettier"
     ],
     "rules": {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
       "class-methods-use-this": "off",
       "no-useless-constructor": "off",
       "camelcase": "off",
