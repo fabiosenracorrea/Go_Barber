@@ -29,6 +29,8 @@ class ListProvidersService {
         except: user_id,
       });
 
+      console.log('query no banco realizada!');
+
       await this.cacheProvider.save(cacheKey, users);
     }
 
