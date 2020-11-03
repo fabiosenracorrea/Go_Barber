@@ -1,11 +1,13 @@
 import AppError from '@shared/errors/AppError';
 
 import FakeAppointmentRepository from '@modules/appointments/repositories/fakes/FakeAppointmentRepository';
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 
 import ListProviderAppointmentScheduleService from './ListProviderAppointmentScheduleService';
 
 let fakeAppointmentRepository: FakeAppointmentRepository;
 let listProvidersSchedule: ListProviderAppointmentScheduleService;
+let fakeCacheProvider: FakeCacheProvider;
 
 const appointmentProvider = '123123123';
 const user_id = '392u38928';
@@ -13,9 +15,11 @@ const user_id = '392u38928';
 describe('Create User Service Tests', () => {
   beforeEach(() => {
     fakeAppointmentRepository = new FakeAppointmentRepository();
+    fakeCacheProvider = new FakeCacheProvider();
 
     listProvidersSchedule = new ListProviderAppointmentScheduleService(
       fakeAppointmentRepository,
+      fakeCacheProvider,
     );
   });
 

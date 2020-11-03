@@ -8,6 +8,7 @@ import Appointment from '@modules/appointments/infra/typeorm/entities/Appointmen
 import IAppointmentRepository from '@modules/appointments/repositories/iAppointmentsRepository';
 import ICreateAppointmentDTO from '@modules/appointments/dtos/iCreateAppointmentDTO';
 import iNotificationsRepository from '@modules/notifications/repositories/iNotificationsRepository';
+import iCacheProvider from '@shared/container/providers/CacheProvider/models/iCacheProvider';
 
 @injectable()
 class CreateAppointmentService {
@@ -17,6 +18,9 @@ class CreateAppointmentService {
 
     @inject('NotificationRepository')
     private notificationRepository: iNotificationsRepository,
+
+    @inject('CacheProvider')
+    private cacheProvider: iCacheProvider,
   ) {}
 
   public async execute({
@@ -63,11 +67,16 @@ class CreateAppointmentService {
       date: parsedDate,
     });
 
-    const dateFormatted = format(parsedDate, "dd/MM/yyyy 'às' HH:mm");
+    const dateOnCache = format(parsedDate, 'yyyy-M-d');
+    const cacheKey = `provider-appointments:${provider_id}:${dateOnCache}`;
+
+    await this.cacheProvider.invalidate(cacheKey);
+
+    const dateOnNotification = format(parsedDate, "dd/MM/yyyy 'às' HH:mm");
 
     await this.notificationRepository.create({
       recipient_id: provider_id,
-      content: `Novo agendamento para dia ${dateFormatted}`,
+      content: `Novo agendamento para dia ${dateOnNotification}`,
     });
 
     return appointment;

@@ -1,5 +1,4 @@
 import { Response, Request } from 'express';
-import { parseISO } from 'date-fns';
 import { container } from 'tsyringe';
 
 import CreateAppointmentService from '@modules/appointments/services/CreateAppointmentService';
@@ -9,14 +8,12 @@ class AppointmentsController {
     const { provider_id, date } = request.body;
     const { id: user_id } = request.user;
 
-    const dateFormatted = parseISO(date);
-
     const appointmentService = container.resolve(CreateAppointmentService);
 
     const appointment = await appointmentService.execute({
       user_id,
       provider_id,
-      date: dateFormatted,
+      date,
     });
 
     return response.status(201).json(appointment);

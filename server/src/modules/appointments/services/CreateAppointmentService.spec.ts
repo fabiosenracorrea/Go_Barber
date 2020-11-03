@@ -1,13 +1,15 @@
-import { startOfHour } from 'date-fns';
+import { startOfHour, format } from 'date-fns';
 
 import AppError from '@shared/errors/AppError';
 
 import FakeAppointmentsRepository from '@modules/appointments/repositories/fakes/FakeAppointmentRepository';
 import FakeNotificationRepository from '@modules/notifications/repositories/fakes/FakeNotificationRepository';
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 import CreateAppointmentService from './CreateAppointmentService';
 
 let fakeAppointmentsRepository: FakeAppointmentsRepository;
 let fakeNotificationRepository: FakeNotificationRepository;
+let fakeCacheProvider: FakeCacheProvider;
 let createAppointmentService: CreateAppointmentService;
 
 const appointmentDate = new Date(2100, 4, 29, 12);
@@ -18,10 +20,12 @@ describe('Create Appointment Service', () => {
   beforeEach(() => {
     fakeAppointmentsRepository = new FakeAppointmentsRepository();
     fakeNotificationRepository = new FakeNotificationRepository();
+    fakeCacheProvider = new FakeCacheProvider();
 
     createAppointmentService = new CreateAppointmentService(
       fakeAppointmentsRepository,
       fakeNotificationRepository,
+      fakeCacheProvider,
     );
   });
 
@@ -114,5 +118,21 @@ describe('Create Appointment Service', () => {
     });
 
     expect(createNotification).toHaveBeenCalled();
+  });
+
+  it('should invalidate previously saved cache', async () => {
+    const createNotification = jest.spyOn(fakeCacheProvider, 'invalidate');
+
+    const formatedDate = format(appointmentDate, 'yyy-M-d');
+    const cacheKey = `provider-appointments:${appointmentProvider}:${formatedDate}`;
+
+    await createAppointmentService.execute({
+      date: appointmentDate,
+      provider_id: appointmentProvider,
+      user_id,
+    });
+
+    expect(createNotification).toHaveBeenCalled();
+    expect(createNotification).toHaveBeenCalledWith(cacheKey);
   });
 });
