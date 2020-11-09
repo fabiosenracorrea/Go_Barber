@@ -1,5 +1,6 @@
 import { Response, Request } from 'express';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 import ListProviderAppointmentScheduleService from '@modules/appointments/services/ListProviderAppointmentScheduleService';
 
@@ -19,7 +20,7 @@ class ProvidersController {
       provider_id,
     });
 
-    return response.status(200).json(providerAppointments);
+    return response.status(200).json(classToClass(providerAppointments));
   }
 }
 
