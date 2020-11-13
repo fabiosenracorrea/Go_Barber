@@ -35,7 +35,7 @@ class ResetPasswordService {
     const user = await this.usersRepository.findById(userToken.user_id);
 
     if (!user) {
-      throw new AppError('User Does Not Exists');
+      throw new AppError('User Does Not Exist');
     }
 
     const MAX_WAITING_TIME_IN_HOURS = 2;
