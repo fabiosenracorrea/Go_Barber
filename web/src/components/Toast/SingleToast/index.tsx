@@ -30,7 +30,7 @@ const SingleToast: React.FC<SingleToastProps> = ({ message, styles }) => {
   return (
     <ToastMessage
       key={message.id}
-      hasDescription={!!message.description}
+      hasDescription={Number(!!message.description)}
       type={message.type}
       style={styles}
     >

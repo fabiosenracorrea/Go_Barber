@@ -2,12 +2,14 @@ import React, { ButtonHTMLAttributes } from 'react';
 
 import { StyledButton } from './styles';
 
-type CustomButton = ButtonHTMLAttributes<HTMLButtonElement>;
+type CustomButton = ButtonHTMLAttributes<HTMLButtonElement> & {
+  loading?: boolean;
+};
 
-const Button: React.FC<CustomButton> = ({ children, ...rest }) => {
+const Button: React.FC<CustomButton> = ({ children, loading, ...rest }) => {
   return (
-    <StyledButton type="button" {...rest}>
-      {children}
+    <StyledButton disabled={loading} type="button" {...rest}>
+      {loading ? 'Carregando...' : children}
     </StyledButton>
   );
 };
