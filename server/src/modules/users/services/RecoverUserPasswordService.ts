@@ -2,7 +2,6 @@ import { injectable, inject } from 'tsyringe';
 import path from 'path';
 
 import AppError from '@shared/errors/AppError';
-// import User from '@modules/users/infra/typeorm/entities/User';
 
 import iUsersRepository from '@modules/users/repositories/iUsersRepository';
 import iMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
@@ -41,7 +40,7 @@ class RecoverUserPasswordService {
       'forgot_password.hbs',
     );
 
-    const resetLink = `${process.env.APP_WEB_URL}/reset_password?token=${token}`;
+    const resetLink = `${process.env.APP_WEB_URL}/reset-password?token=${token}`;
 
     await this.mailProvider.sendMail({
       to: {
