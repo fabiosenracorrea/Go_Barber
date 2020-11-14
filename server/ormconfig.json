@@ -2,8 +2,8 @@
   {
     "name": "default",
     "type": "postgres",
-    "linuxHost": "localhost",
-    "host": "192.168.99.100",
+    "host": "localhost",
+    "windowsHost": "192.168.99.100",
     "port": 5432,
     "username": "postgres",
     "password": "gobarber_fabao",
@@ -22,8 +22,8 @@
   {
     "name": "mongo",
     "type": "mongodb",
-    "linuxHost": "localhost",
-    "host": "192.168.99.100",
+    "host": "localhost",
+    "windowsHost": "192.168.99.100",
     "port": 27017,
     "database": "gostack_gobarber",
     "useUnifiedTopology": true,
