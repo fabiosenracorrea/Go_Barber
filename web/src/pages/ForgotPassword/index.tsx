@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FiArrowLeft, FiMail } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
@@ -25,7 +25,6 @@ const ForgotPassword: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { addToast } = useToast();
-  const history = useHistory();
 
   const handleSubmit = useCallback(
     async (data: ForgotFormData): Promise<void> => {
@@ -87,7 +86,9 @@ const ForgotPassword: React.FC = () => {
 
           <Input icon={FiMail} name="email" placeholder="E-mail" />
 
-          <Button type="submit">Entrar</Button>
+          <Button loading={loading} type="submit">
+            Recuperar
+          </Button>
         </Form>
 
         <Link to="/">
