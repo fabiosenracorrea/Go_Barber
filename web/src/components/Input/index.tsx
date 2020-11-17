@@ -47,6 +47,7 @@ const Input: React.FC<CustomInput> = ({ name, icon: Icon, ...rest }) => {
         <StyledInput
           ref={inputRef}
           name={name}
+          defaultValue={defaultValue}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           {...rest}

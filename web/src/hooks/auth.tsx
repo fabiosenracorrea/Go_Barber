@@ -6,6 +6,7 @@ interface User {
   id: string;
   avatar: string;
   name: string;
+  email: string;
 }
 
 interface SignInCredentials {
@@ -22,6 +23,7 @@ interface AuthContextProps {
   user: User;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
+  updateUser(newUserData: User): void;
 }
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -39,6 +41,18 @@ const AuthProvider: React.FC = ({ children }) => {
 
     return {} as UserData;
   });
+
+  const updateUser = useCallback(
+    (newUserData: User) => {
+      setData({
+        token: data.token,
+        user: newUserData,
+      });
+
+      localStorage.setItem('@GoBarber:user', JSON.stringify(newUserData));
+    },
+    [data.token],
+  );
 
   const signIn = useCallback(async ({ email, password }) => {
     const response = await api.post<UserData>('/sessions', {
@@ -67,7 +81,9 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user: data.user, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ user: data.user, signIn, signOut, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
