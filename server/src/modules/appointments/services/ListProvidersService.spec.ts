@@ -1,5 +1,3 @@
-import AppError from '@shared/errors/AppError';
-
 import FakeUserRepository from '@modules/users/repositories/fakes/FakeUserRepository';
 import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 

@@ -1,4 +1,5 @@
 import { injectable, inject } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 import User from '@modules/users/infra/typeorm/entities/User';
 
@@ -31,7 +32,7 @@ class ListProvidersService {
 
       console.log('query no banco realizada!');
 
-      await this.cacheProvider.save(cacheKey, users);
+      await this.cacheProvider.save(cacheKey, classToClass(users));
     }
 
     return users;
