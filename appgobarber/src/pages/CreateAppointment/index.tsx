@@ -1,6 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { useAuth } from '../../hooks/auth';
 import { Provider } from '../Dashboard';
@@ -20,18 +22,35 @@ import {
   ProviderContainer,
   ProviderName,
   ProviderAvatar,
+  Calendar,
+  CalendarTitle,
+  OpenDatePickerButton,
+  OpenDatePickerButtonText,
 } from './styles';
 
 interface RouteParams {
   providerID: string;
 }
 
+interface AvailabilityItem {
+  hour: number;
+  available: Boolean;
+}
+
 const CreateAppointment: React.FC = () => {
   const route = useRoute();
   const { goBack } = useNavigation();
   const { providerID } = route.params as RouteParams;
+
   const [providers, setProviders] = useState<Provider[]>([]);
+
   const [selectedProvider, setSelectedProvider] = useState(providerID);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [providerAvailability, setProviderAvailability] = useState<
+    AvailabilityItem[]
+  >([]);
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const { user } = useAuth();
 
@@ -39,17 +58,43 @@ const CreateAppointment: React.FC = () => {
     api.get<Provider[]>('/providers/list').then(response => {
       const { data: providerList } = response;
 
-      const selectedIndex = providerList.findIndex(
-        provider => provider.id === selectedProvider,
-      );
+      let updatedProviderList = providerList;
 
-      const selectedProviderInfo = providerList.splice(selectedIndex, 1);
+      if (selectedProvider) {
+        const selectedIndex = providerList.findIndex(
+          provider => provider.id === selectedProvider,
+        );
 
-      const updatedProviderList = [...selectedProviderInfo, ...providerList];
+        const selectedProviderInfo = providerList.splice(selectedIndex, 1);
+
+        updatedProviderList = [...selectedProviderInfo, ...providerList];
+      }
 
       setProviders(updatedProviderList);
     });
   }, []);
+
+  useEffect(() => {
+    async function loadAvailability() {
+      const URL = `/providers/${selectedProvider}/day-availability`;
+
+      try {
+        const { data: availability } = await api.get<AvailabilityItem[]>(URL, {
+          params: {
+            year: selectedDate.getFullYear(),
+            month: selectedDate.getMonth() + 1,
+            day: selectedDate.getDate(),
+          },
+        });
+
+        setProviderAvailability(availability);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    loadAvailability();
+  }, [selectedDate, selectedProvider]);
 
   const navigateBack = useCallback(() => {
     goBack();
@@ -58,6 +103,30 @@ const CreateAppointment: React.FC = () => {
   const handleProviderClick = useCallback((providerId: string) => {
     setSelectedProvider(providerId);
   }, []);
+
+  const handleDatePickerToggle = useCallback(() => {
+    setShowDatePicker(oldShowValue => !oldShowValue);
+  }, []);
+
+  const handleDateChange = useCallback((event, date: Date | undefined) => {
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+
+    if (date) {
+      setSelectedDate(date);
+    }
+  }, []);
+
+  const parsedDate = useMemo(() => {
+    const day = selectedDate.getDate();
+    const month = selectedDate.getMonth() + 1;
+    const year = selectedDate.getFullYear();
+
+    const dateToShow = `${day}/${month}/${year}`;
+
+    return dateToShow;
+  }, [selectedDate]);
 
   return (
     <Container>
@@ -95,6 +164,25 @@ const CreateAppointment: React.FC = () => {
           )}
         />
       </ProvidersListContainer>
+
+      <Calendar>
+        <CalendarTitle>Dia selecionado: {parsedDate}</CalendarTitle>
+
+        <OpenDatePickerButton onPress={handleDatePickerToggle}>
+          <OpenDatePickerButtonText>
+            Selecionar outra data
+          </OpenDatePickerButtonText>
+        </OpenDatePickerButton>
+
+        {showDatePicker && (
+          <DateTimePicker
+            display="calendar"
+            mode="date"
+            value={selectedDate}
+            onChange={handleDateChange}
+          />
+        )}
+      </Calendar>
     </Container>
   );
 };
