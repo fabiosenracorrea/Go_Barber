@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 
 import { useAuth } from '../../hooks/auth';
 import { Provider } from '../Dashboard';
@@ -127,6 +128,30 @@ const CreateAppointment: React.FC = () => {
 
     return dateToShow;
   }, [selectedDate]);
+
+  const morningAvailability = useMemo(() => {
+    const morningFiltered = providerAvailability
+      .filter(({ hour }) => hour < 12)
+      .map(({ hour, available }) => ({
+        hour,
+        available,
+        formattedHour: format(new Date().setHours(hour), 'HH:00'),
+      }));
+
+    return morningFiltered;
+  }, [providerAvailability]);
+
+  const afternoonAvailability = useMemo(() => {
+    const afterNoonFiltered = providerAvailability
+      .filter(({ hour }) => hour >= 12)
+      .map(({ hour, available }) => ({
+        hour,
+        available,
+        formattedHour: format(new Date().setHours(hour), 'HH:00'),
+      }));
+
+    return afterNoonFiltered;
+  }, [providerAvailability]);
 
   return (
     <Container>
