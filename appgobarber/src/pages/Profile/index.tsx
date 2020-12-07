@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
+import ImagePicker from 'react-native-image-picker';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -46,6 +47,42 @@ const SignUp: React.FC = () => {
   const { navigate, goBack } = useNavigation();
 
   const { user, updateUser } = useAuth();
+
+  const handleAvatarUpdate = useCallback(() => {
+    ImagePicker.showImagePicker(
+      {
+        title: 'Selecione um avatar',
+        cancelButtonTitle: 'Cancelar',
+        takePhotoButtonTitle: 'User câmera',
+        chooseFromLibraryButtonTitle: 'Escolher da galeria',
+      },
+      response => {
+        if (response.didCancel) {
+          return;
+        }
+
+        if (response.error) {
+          Alert.alert('Erro ao atualizar avatar.', 'Tente novamente');
+          return;
+        }
+
+        const data = new FormData();
+
+        data.append('avatar', {
+          uri: response.uri,
+          type: response.type,
+          name: `${user.id}.jpg`,
+        });
+
+        api
+          .patch('users/avatar', data)
+          .then(({ data: newUserData }) => updateUser(newUserData))
+          .catch(_ =>
+            Alert.alert('Erro ao atualizar avatar.', 'Tente novamente'),
+          );
+      },
+    );
+  }, [user, updateUser]);
 
   const handleSignUp = useCallback(
     async (data: FormData): Promise<void> => {
@@ -140,7 +177,7 @@ const SignUp: React.FC = () => {
               <Icon name="chevron-left" size={24} color="#999591" />
             </BackButton>
 
-            <UserAvatarButton onPress={() => {}}>
+            <UserAvatarButton onPress={handleAvatarUpdate}>
               <UserAvatar source={{ uri: user.avatar }} />
             </UserAvatarButton>
 
