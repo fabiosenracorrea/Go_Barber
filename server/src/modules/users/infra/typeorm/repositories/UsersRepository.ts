@@ -52,9 +52,11 @@ class UsersRepository implements iUsersRepository {
   }
 
   public async save(userData: User): Promise<User> {
-    const updatedUser = await this.ormRepository.save(userData);
+    await this.ormRepository.save(userData);
 
-    return updatedUser;
+    const updatedUser = await this.ormRepository.findOne(userData.id);
+
+    return updatedUser as User;
   }
 }
 
