@@ -42,7 +42,12 @@ const Input: React.FC<CustomInput> = ({ name, icon: Icon, ...rest }) => {
 
   return (
     <>
-      <Container hasError={!!error} focusOn={isFocusOn} hasText={isFilled}>
+      <Container
+        hasError={!!error}
+        focusOn={isFocusOn}
+        hasText={isFilled}
+        data-testid="input-container"
+      >
         {Icon && <Icon size={20} />}
         <StyledInput
           ref={inputRef}
