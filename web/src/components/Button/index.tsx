@@ -6,7 +6,7 @@ type CustomButton = ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
 };
 
-const Button: React.FC<CustomButton> = ({ children, loading, ...rest }) => {
+const Button: React.FC<CustomButton> = ({ children, loading, ...rest }: CustomButton) => {
   return (
     <StyledButton disabled={loading} type="button" {...rest}>
       {loading ? 'Carregando...' : children}

@@ -79,6 +79,10 @@ const SignIn: React.FC = () => {
     }
   }, []);
 
+  const handleForgotPassword = useCallback(() => {
+    navigation.navigate('ForgotPassword')
+  }, [navigation]);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -132,7 +136,7 @@ const SignIn: React.FC = () => {
               Entrar
             </Button>
 
-            <ForgotPassword onPress={() => {}}>
+            <ForgotPassword onPress={handleForgotPassword}>
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
             </ForgotPassword>
           </Container>
