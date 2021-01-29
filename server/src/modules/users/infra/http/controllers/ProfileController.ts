@@ -5,7 +5,7 @@ import { classToClass } from 'class-transformer';
 import UpdateUserInfoService from '@modules/users/services/UpdateUserInfoService';
 import ShowProfileService from '@modules/users/services/ShowProfileService';
 
-class UsersController {
+class ProfileController {
   public async show(request: Request, response: Response): Promise<Response> {
     const { id } = request.user;
 
@@ -36,4 +36,4 @@ class UsersController {
   }
 }
 
-export default UsersController;
+export default ProfileController;
